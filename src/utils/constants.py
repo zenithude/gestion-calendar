@@ -2,7 +2,7 @@
 
 DATABASE_PATH = "calendar_data.db"
 APP_NAME = "Gestion Calendrier"
-APP_VERSION = "1.0.1"
+APP_VERSION = "1.0.2"
 
 DEFAULT_CATEGORIES = {
     "Perso": ["Médical", "Loisirs", "Famille", "Sport"],

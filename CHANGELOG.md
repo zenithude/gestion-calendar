@@ -5,6 +5,21 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet respecte le [Versioning Sémantique](https://semver.org/lang/fr/).
 
+## [1.0.2] - 2024-07-19
+
+### 🔒 Correctif de Sécurité
+
+#### Sécurité
+- **Pillow Security Update** : Mise à jour de Pillow 10.2.0 → 10.3.0 pour corriger une vulnérabilité de sécurité critique détectée par GitHub Dependabot
+- **Dépendances sécurisées** : Projet sans alertes de sécurité
+
+#### Validation
+- ✅ 28 tests passent sans régression
+- ✅ Application fonctionnelle avec nouvelle version Pillow
+- ✅ Aucun impact sur les fonctionnalités GUI
+
+---
+
 ## [1.0.1] - 2024-07-19
 
 ### 🐛 Corrections Critiques
