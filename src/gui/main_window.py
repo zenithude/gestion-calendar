@@ -9,6 +9,7 @@ from src.gui.calendar_view import CalendarView
 from src.gui.timeline_view import TimelineView
 from src.gui.appointment_dialog import AppointmentDialog
 from src.utils.constants import APP_NAME, APP_VERSION
+from src.utils.theme import getButtonStyle, getFrameStyle, SIZES, COLORS, FONTS, CORNER_RADIUS
 
 
 class MainWindow:
@@ -57,95 +58,143 @@ class MainWindow:
     
     def createSidebar(self):
         """Crée la barre latérale avec les contrôles"""
-        self.sidebar = ctk.CTkFrame(self.main_frame, width=250)
-        self.sidebar.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+        sidebar_style = getFrameStyle("sidebar")
+        self.sidebar = ctk.CTkFrame(
+            self.main_frame, 
+            width=SIZES["sidebar_width"],
+            **sidebar_style
+        )
+        self.sidebar.grid(row=0, column=0, sticky="nsew", padx=(0, SIZES["spacing_md"]))
         self.sidebar.grid_propagate(False)
         
         # Titre de l'application
         title_label = ctk.CTkLabel(
             self.sidebar, 
             text=APP_NAME,
-            font=ctk.CTkFont(size=20, weight="bold")
+            font=ctk.CTkFont(size=20, weight="bold"),
+            text_color=COLORS["text_primary"]
         )
-        title_label.pack(pady=(20, 30))
+        title_label.pack(pady=(SIZES["spacing_xl"], SIZES["spacing_xxl"]))
         
         # Navigation temporelle
-        nav_frame = ctk.CTkFrame(self.sidebar)
-        nav_frame.pack(fill="x", padx=20, pady=(0, 20))
+        nav_frame_style = getFrameStyle("card")
+        nav_frame = ctk.CTkFrame(self.sidebar, **nav_frame_style)
+        nav_frame.pack(fill="x", padx=SIZES["spacing_xl"], pady=(0, SIZES["spacing_xl"]))
         
-        nav_label = ctk.CTkLabel(nav_frame, text="Navigation", font=ctk.CTkFont(weight="bold"))
-        nav_label.pack(pady=(10, 5))
+        nav_label = ctk.CTkLabel(
+            nav_frame, 
+            text="Navigation", 
+            font=ctk.CTkFont(weight="bold"),
+            text_color=COLORS["text_primary"]
+        )
+        nav_label.pack(pady=(SIZES["spacing_md"], SIZES["spacing_sm"]))
         
         # Boutons de navigation
-        nav_buttons_frame = ctk.CTkFrame(nav_frame)
-        nav_buttons_frame.pack(fill="x", padx=10, pady=(0, 10))
+        nav_buttons_frame = ctk.CTkFrame(nav_frame, fg_color="transparent")
+        nav_buttons_frame.pack(fill="x", padx=SIZES["spacing_md"], pady=(0, SIZES["spacing_md"]))
+        
+        # Boutons précédent et suivant parfaitement carrés (angles ratés résolus)
+        nav_btn_style = getButtonStyle("primary", "small")
+        nav_btn_style["corner_radius"] = 0  # CARRÉ pour éviter les angles ratés
         
         prev_btn = ctk.CTkButton(
             nav_buttons_frame, 
             text="◀", 
-            width=40,
-            command=self.previousPeriod
+            width=SIZES["button_height"],
+            command=self.previousPeriod,
+            **nav_btn_style
         )
-        prev_btn.pack(side="left", padx=(0, 5))
+        prev_btn.pack(side="left", padx=(0, SIZES["spacing_sm"]))
         
         self.date_label = ctk.CTkLabel(
             nav_buttons_frame, 
             text=self.current_date.strftime("%B %Y"),
-            font=ctk.CTkFont(weight="bold")
+            font=ctk.CTkFont(weight="bold"),
+            text_color=COLORS["text_primary"]
         )
         self.date_label.pack(side="left", expand=True)
         
         next_btn = ctk.CTkButton(
             nav_buttons_frame, 
             text="▶", 
-            width=40,
-            command=self.nextPeriod
+            width=SIZES["button_height"],
+            command=self.nextPeriod,
+            **nav_btn_style
         )
-        next_btn.pack(side="right", padx=(5, 0))
+        next_btn.pack(side="right", padx=(SIZES["spacing_sm"], 0))
         
-        # Bouton aujourd'hui
+        # Bouton aujourd'hui parfaitement carré (angles ratés résolus)
+        today_btn_style = getButtonStyle("secondary")
+        today_btn_style["corner_radius"] = 0  # CARRÉ pour éviter les angles ratés
         today_btn = ctk.CTkButton(
             nav_frame,
             text="Aujourd'hui",
-            command=self.goToToday
+            command=self.goToToday,
+            **today_btn_style
         )
-        today_btn.pack(pady=(0, 10))
+        today_btn.pack(pady=(0, SIZES["spacing_md"]))
         
         # Actions
-        actions_frame = ctk.CTkFrame(self.sidebar)
-        actions_frame.pack(fill="x", padx=20, pady=(0, 20))
+        actions_frame_style = getFrameStyle("card")
+        actions_frame = ctk.CTkFrame(self.sidebar, **actions_frame_style)
+        actions_frame.pack(fill="x", padx=SIZES["spacing_xl"], pady=(0, SIZES["spacing_xl"]))
         
-        actions_label = ctk.CTkLabel(actions_frame, text="Actions", font=ctk.CTkFont(weight="bold"))
-        actions_label.pack(pady=(10, 5))
+        actions_label = ctk.CTkLabel(
+            actions_frame, 
+            text="Actions", 
+            font=ctk.CTkFont(weight="bold"),
+            text_color=COLORS["text_primary"]
+        )
+        actions_label.pack(pady=(SIZES["spacing_md"], SIZES["spacing_sm"]))
         
+        # Bouton nouveau rendez-vous parfaitement carré (angles ratés résolus)
+        new_appointment_btn_style = getButtonStyle("success")
+        new_appointment_btn_style["corner_radius"] = 0  # CARRÉ pour éviter les angles ratés
         new_appointment_btn = ctk.CTkButton(
             actions_frame,
             text="+ Nouveau RDV",
-            command=self.createNewAppointment
+            command=self.createNewAppointment,
+            **new_appointment_btn_style
         )
-        new_appointment_btn.pack(fill="x", padx=10, pady=(0, 10))
+        new_appointment_btn.pack(fill="x", padx=SIZES["spacing_md"], pady=(0, SIZES["spacing_md"]))
         
         # Filtres par catégorie
-        filters_frame = ctk.CTkFrame(self.sidebar)
-        filters_frame.pack(fill="x", padx=20, pady=(0, 20))
+        filters_frame_style = getFrameStyle("card")
+        filters_frame = ctk.CTkFrame(self.sidebar, **filters_frame_style)
+        filters_frame.pack(fill="x", padx=SIZES["spacing_xl"], pady=(0, SIZES["spacing_xl"]))
         
-        filters_label = ctk.CTkLabel(filters_frame, text="Filtres", font=ctk.CTkFont(weight="bold"))
-        filters_label.pack(pady=(10, 5))
+        filters_label = ctk.CTkLabel(
+            filters_frame, 
+            text="Filtres", 
+            font=ctk.CTkFont(weight="bold"),
+            text_color=COLORS["text_primary"]
+        )
+        filters_label.pack(pady=(SIZES["spacing_md"], SIZES["spacing_sm"]))
         
-        # Checkboxes pour les catégories
+        # Checkboxes pour les catégories avec style amélioré et bordure visible
         categories = self.category_service.getAllCategories()
         for category in categories:
             checkbox = ctk.CTkCheckBox(
                 filters_frame, 
                 text=category.name,
-                command=lambda: self.updateCalendarView()
+                command=lambda: self.updateCalendarView(),
+                text_color=COLORS["text_primary"],
+                # SOLUTION: Bordure toujours visible + remplissage qui change
+                fg_color=COLORS["primary"],              # Couleur quand coché (bleu)
+                hover_color=COLORS["primary_hover"],     # Couleur au survol
+                checkmark_color=COLORS["text_inverse"],  # Couleur de la coche (blanc)
+                border_color=COLORS["primary"],          # Bordure toujours bleue
+                border_width=2,                          # Bordure épaisse et visible
+                corner_radius=0,  # CARRÉ pour cohérence avec tous les boutons sidebar
+                font=ctk.CTkFont(size=FONTS["size_md"], weight=FONTS["weight_normal"])
             )
-            checkbox.pack(anchor="w", padx=10, pady=2)
+            checkbox.pack(anchor="w", padx=SIZES["spacing_md"], pady=SIZES["spacing_xs"])
             checkbox.select()  # Sélectionné par défaut
     
     def createContentArea(self):
         """Crée la zone de contenu principal"""
-        self.content_frame = ctk.CTkFrame(self.main_frame)
+        content_style = getFrameStyle("default")
+        self.content_frame = ctk.CTkFrame(self.main_frame, **content_style)
         self.content_frame.grid(row=0, column=1, sticky="nsew")
         self.content_frame.grid_columnconfigure(0, weight=1)
         self.content_frame.grid_rowconfigure(0, weight=1)
@@ -157,22 +206,25 @@ class MainWindow:
             self.onDateSelected,
             self.onAppointmentSelected
         )
-        self.calendar_view.pack(fill="both", expand=True, padx=10, pady=10)
+        self.calendar_view.pack(fill="both", expand=True, padx=SIZES["spacing_md"], pady=SIZES["spacing_md"])
         
         # Initialiser avec la date courante
         self.calendar_view.showDate(self.current_date)
     
     def createStatusBar(self):
         """Crée la barre de statut"""
-        self.status_frame = ctk.CTkFrame(self.main_frame, height=30)
-        self.status_frame.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+        status_style = getFrameStyle("card")
+        self.status_frame = ctk.CTkFrame(self.main_frame, height=30, **status_style)
+        self.status_frame.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(SIZES["spacing_md"], 0))
         self.status_frame.grid_propagate(False)
         
         self.status_label = ctk.CTkLabel(
             self.status_frame, 
-            text=f"Prêt - {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+            text=f"Prêt - {datetime.now().strftime('%d/%m/%Y %H:%M')}",
+            text_color=COLORS["text_secondary"],
+            font=ctk.CTkFont(size=12)
         )
-        self.status_label.pack(side="left", padx=10, pady=5)
+        self.status_label.pack(side="left", padx=SIZES["spacing_md"], pady=SIZES["spacing_sm"])
     
     def setupBindings(self):
         """Configure les raccourcis clavier"""

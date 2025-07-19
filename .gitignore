@@ -208,3 +208,6 @@ secrets.json
 # Test artifacts
 test_calendar_data.db
 test_*.db
+
+# Development documentation (local only)
+docs/

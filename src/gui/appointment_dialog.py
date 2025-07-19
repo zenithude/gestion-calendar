@@ -7,6 +7,7 @@ from src.services.category_service import CategoryService
 from src.models.appointment import Appointment
 from src.models.category import Category
 from src.models.subcategory import Subcategory
+from src.utils.theme import getButtonStyle, getFrameStyle, SIZES, COLORS, FONTS
 
 
 class AppointmentDialog:
@@ -44,7 +45,7 @@ class AppointmentDialog:
         """Affiche le dialogue"""
         self.window = ctk.CTkToplevel(self.parent)
         self.window.title("Modifier le rendez-vous" if self.is_editing else "Nouveau rendez-vous")
-        self.window.geometry("600x750")
+        self.window.geometry(f"{SIZES['dialog_width']}x{SIZES['dialog_height']}")
         self.window.resizable(True, True)
         self.window.transient(self.parent)
         
@@ -54,9 +55,9 @@ class AppointmentDialog:
         
         # Centrer la fenêtre après création du contenu
         self.window.update_idletasks()
-        x = (self.window.winfo_screenwidth() // 2) - (600 // 2)
-        y = (self.window.winfo_screenheight() // 2) - (750 // 2)
-        self.window.geometry(f"600x750+{x}+{y}")
+        x = (self.window.winfo_screenwidth() // 2) - (SIZES['dialog_width'] // 2)
+        y = (self.window.winfo_screenheight() // 2) - (SIZES['dialog_height'] // 2)
+        self.window.geometry(f"{SIZES['dialog_width']}x{SIZES['dialog_height']}+{x}+{y}")
         
         # Forcer l'affichage complet avant grab_set
         self.window.update()
@@ -86,21 +87,24 @@ class AppointmentDialog:
     
     def setupUI(self):
         """Configure l'interface du dialogue"""
-        # Frame principal
-        main_frame = ctk.CTkFrame(self.window)
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        # Frame principal avec style
+        main_frame_style = getFrameStyle("dialog")
+        main_frame = ctk.CTkFrame(self.window, **main_frame_style)
+        main_frame.pack(fill="both", expand=True, padx=SIZES["spacing_xl"], pady=SIZES["spacing_xl"])
         
-        # Titre
+        # Titre avec style amélioré
         title_label = ctk.CTkLabel(
             main_frame,
             text="Modifier le rendez-vous" if self.is_editing else "Créer un nouveau rendez-vous",
-            font=ctk.CTkFont(size=18, weight="bold")
+            font=ctk.CTkFont(size=FONTS["size_title"], weight=FONTS["weight_bold"]),
+            text_color=COLORS["text_primary"]
         )
-        title_label.pack(pady=(10, 20))
+        title_label.pack(pady=(SIZES["spacing_md"], SIZES["spacing_xl"]))
         
-        # Formulaire
-        form_frame = ctk.CTkFrame(main_frame)
-        form_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
+        # Formulaire avec style
+        form_frame_style = getFrameStyle("card")
+        form_frame = ctk.CTkFrame(main_frame, **form_frame_style)
+        form_frame.pack(fill="both", expand=True, padx=SIZES["spacing_md"], pady=(0, SIZES["spacing_md"]))
         
         # Titre du rendez-vous
         ctk.CTkLabel(form_frame, text="Titre *", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=20, pady=(20, 5))
@@ -152,32 +156,38 @@ class AppointmentDialog:
         self.subcategory_combo = ctk.CTkComboBox(form_frame, values=[])
         self.subcategory_combo.pack(fill="x", padx=20, pady=(0, 20))
         
-        # Boutons d'action
+        # Boutons d'action avec styles appropriés
         buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        buttons_frame.pack(fill="x", pady=(10, 0))
+        buttons_frame.pack(fill="x", pady=(SIZES["spacing_md"], 0))
         
+        # Bouton Annuler
+        cancel_btn_style = getButtonStyle("secondary")
         cancel_btn = ctk.CTkButton(
             buttons_frame,
             text="Annuler",
-            fg_color="#6B7280",
-            command=self.cancel
+            command=self.cancel,
+            **cancel_btn_style
         )
-        cancel_btn.pack(side="right", padx=(10, 0))
+        cancel_btn.pack(side="right", padx=(SIZES["spacing_md"], 0))
         
+        # Bouton Sauvegarder/Modifier
+        save_btn_style = getButtonStyle("primary")
         save_btn = ctk.CTkButton(
             buttons_frame,
             text="Modifier" if self.is_editing else "Créer",
-            command=self.save
+            command=self.save,
+            **save_btn_style
         )
         save_btn.pack(side="right")
         
         # Bouton supprimer (seulement en mode édition)
         if self.is_editing:
+            delete_btn_style = getButtonStyle("error")
             delete_btn = ctk.CTkButton(
                 buttons_frame,
                 text="Supprimer",
-                fg_color="#EF4444",
-                command=self.delete
+                command=self.delete,
+                **delete_btn_style
             )
             delete_btn.pack(side="left")
     
