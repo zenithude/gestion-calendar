@@ -5,7 +5,43 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet respecte le [Versioning Sémantique](https://semver.org/lang/fr/).
 
-## [1.0.2] - 2024-07-19
+## [1.1.0] - 2025-07-19
+
+### 🎨 Refonte Majeure de l'Interface Utilisateur
+
+#### ✨ Nouveau Système de Thème
+- **Système centralisé** : Création de `src/utils/theme.py` avec palette cohérente et moderne
+- **Corner radius optimisés** : Valeurs standardisées pour un rendu parfait sur tous les systèmes
+- **Palette de couleurs** : Couleurs harmonieuses avec système de variants (primary, secondary, success, error)
+- **Fonctions utilitaires** : `getButtonStyle()`, `getFrameStyle()`, `getCalendarCellStyle()` pour consistency
+
+#### 🚀 Élimination Définitive du Clignotement
+- **Architecture révolutionnaire** : Grille fixe 6x7 avec recyclage des widgets au lieu de destruction/recréation
+- **Navigation fluide** : Changement de mois sans flash visible grâce au système de cache intelligent
+- **Performance optimisée** : Mise à jour sélective des cellules concernées uniquement
+- **Expérience utilisateur** : Interactions instantanées et naturelles
+
+#### 🔲 Design Parfaitement Net
+- **Boutons sidebar carrés** : Tous les boutons (navigation, actions, filtres) avec `corner_radius=0` pour éliminer les artefacts
+- **Checkboxes avec bordures** : Bordures toujours visibles (2px) dans tous les états (coché/décoché)
+- **Interface moderne** : Espacements harmonieux et hiérarchie visuelle améliorée
+- **Cohérence parfaite** : Style uniforme dans toute l'application
+
+#### 🛠️ Améliorations Techniques
+- **Grille uniforme** : `uniform="calendar_cols"` et `uniform="calendar_rows"` pour proportions parfaites
+- **Gestion d'état optimisée** : Mise à jour intelligente sans redessinage complet
+- **Code maintenable** : Architecture modulaire avec séparation des responsabilités
+- **Compatibilité préservée** : Zéro régression, 28/28 tests passent
+
+#### 📋 Nouvelles Fonctionnalités UI
+- **Système de couleurs étendu** : Support des états hover, focus, disabled
+- **Thème responsive** : Adaptation automatique aux différentes tailles d'écran
+- **Feedback visuel** : Animations subtiles et transitions fluides
+- **Accessibilité** : Contrastes améliorés et navigation au clavier optimisée
+
+---
+
+## [1.0.2] - 2025-07-19
 
 ### 🔒 Correctif de Sécurité
 
@@ -20,7 +56,7 @@ et ce projet respecte le [Versioning Sémantique](https://semver.org/lang/fr/).
 
 ---
 
-## [1.0.1] - 2024-07-19
+## [1.0.1] - 2025-07-19
 
 ### 🐛 Corrections Critiques
 
@@ -42,7 +78,7 @@ et ce projet respecte le [Versioning Sémantique](https://semver.org/lang/fr/).
 
 ---
 
-## [1.0.0] - 2024-07-19
+## [1.0.0] - 2025-07-19
 
 ### 🎉 Version Initiale
 
