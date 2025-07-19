@@ -231,6 +231,7 @@ class MainWindow:
         dialog = AppointmentDialog(
             self.root,
             self.category_service,
+            self.appointment_service,
             appointment=None,  # Nouveau rendez-vous
             callback=self.onAppointmentSaved
         )
@@ -241,6 +242,7 @@ class MainWindow:
         dialog = AppointmentDialog(
             self.root,
             self.category_service,
+            self.appointment_service,
             appointment=appointment,
             callback=self.onAppointmentSaved
         )

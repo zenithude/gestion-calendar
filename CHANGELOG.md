@@ -5,6 +5,28 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet respecte le [Versioning Sémantique](https://semver.org/lang/fr/).
 
+## [1.0.1] - 2024-07-19
+
+### 🐛 Corrections Critiques
+
+#### Corrigé
+- **Erreur Tkinter grab_set** : Correction de l'erreur "grab failed: window not viewable" lors de l'ouverture du dialogue de création/édition de rendez-vous
+- **Intégration services** : Connexion complète du dialogue de rendez-vous aux services métier (création, modification, suppression fonctionnelles)
+- **Gestion d'erreurs** : Amélioration de la gestion d'erreurs dans les opérations de base de données
+- **Workflow complet** : Les rendez-vous peuvent maintenant être créés, modifiés et supprimés via l'interface
+
+#### Ajouté
+- **Tests GUI Logic** : 6 nouveaux tests couvrant les workflows complets de gestion des rendez-vous
+- **Validation robuste** : Gestion d'erreurs améliorée dans les dialogues
+- **Focus management** : Amélioration de la gestion du focus des fenêtres
+
+#### Technique
+- Total de **28 tests** (22 existants + 6 nouveaux)
+- Correction de l'ordre d'initialisation dans les dialogues GUI
+- Amélioration de la robustesse des composants d'interface
+
+---
+
 ## [1.0.0] - 2024-07-19
 
 ### 🎉 Version Initiale

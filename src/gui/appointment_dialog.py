@@ -13,10 +13,11 @@ class AppointmentDialog:
     """Dialogue pour la création et modification de rendez-vous"""
     
     def __init__(self, parent, category_service: CategoryService, 
-                 appointment: Optional[Appointment] = None, 
+                 appointment_service, appointment: Optional[Appointment] = None, 
                  callback: Optional[Callable] = None):
         self.parent = parent
         self.category_service = category_service
+        self.appointment_service = appointment_service
         self.appointment = appointment  # None pour création, objet pour édition
         self.callback = callback
         
@@ -43,18 +44,45 @@ class AppointmentDialog:
         """Affiche le dialogue"""
         self.window = ctk.CTkToplevel(self.parent)
         self.window.title("Modifier le rendez-vous" if self.is_editing else "Nouveau rendez-vous")
-        self.window.geometry("500x600")
+        self.window.geometry("600x750")
+        self.window.resizable(True, True)
         self.window.transient(self.parent)
-        self.window.grab_set()
         
-        # Centrer la fenêtre
-        self.window.update_idletasks()
-        x = (self.window.winfo_screenwidth() // 2) - (500 // 2)
-        y = (self.window.winfo_screenheight() // 2) - (600 // 2)
-        self.window.geometry(f"500x600+{x}+{y}")
-        
+        # Afficher l'interface d'abord
         self.setupUI()
         self.loadData()
+        
+        # Centrer la fenêtre après création du contenu
+        self.window.update_idletasks()
+        x = (self.window.winfo_screenwidth() // 2) - (600 // 2)
+        y = (self.window.winfo_screenheight() // 2) - (750 // 2)
+        self.window.geometry(f"600x750+{x}+{y}")
+        
+        # Forcer l'affichage complet avant grab_set
+        self.window.update()
+        
+        # Différer le grab_set pour être sûr que la fenêtre est visible
+        self.window.after(100, self._setWindowFocus)
+    
+    def _setWindowFocus(self):
+        """Configure le focus de la fenêtre de manière sécurisée"""
+        try:
+            if self.window and self.window.winfo_exists():
+                self.window.grab_set()
+                self.window.focus_set()
+                self.window.lift()  # Amener au premier plan
+        except Exception as e:
+            print(f"Info: Focus automatique indisponible: {e}")
+    
+    def _setPopupFocus(self, popup_window):
+        """Configure le focus d'une fenêtre popup de manière sécurisée"""
+        try:
+            if popup_window and popup_window.winfo_exists():
+                popup_window.grab_set()
+                popup_window.focus_set()
+                popup_window.lift()
+        except Exception as e:
+            print(f"Info: Focus popup indisponible: {e}")
     
     def setupUI(self):
         """Configure l'interface du dialogue"""
@@ -315,15 +343,36 @@ class AppointmentDialog:
     
     def createAppointment(self, data: dict) -> Optional[int]:
         """Crée un nouveau rendez-vous"""
-        # Cette méthode devrait utiliser appointment_service
-        # Pour l'instant, on retourne un ID fictif
-        return 1
+        try:
+            appointment_id = self.appointment_service.createAppointment(
+                title=data['title'],
+                description=data['description'],
+                start_datetime=data['start_datetime'],
+                end_datetime=data['end_datetime'],
+                category_id=data['category_id'],
+                subcategory_id=data['subcategory_id']
+            )
+            return appointment_id
+        except Exception as e:
+            print(f"Erreur lors de la création du rendez-vous: {e}")
+            return None
     
     def updateAppointment(self, data: dict) -> bool:
         """Met à jour un rendez-vous existant"""
-        # Cette méthode devrait utiliser appointment_service
-        # Pour l'instant, on retourne True
-        return True
+        try:
+            success = self.appointment_service.updateAppointment(
+                appointment_id=self.appointment.id,
+                title=data['title'],
+                description=data['description'],
+                start_datetime=data['start_datetime'],
+                end_datetime=data['end_datetime'],
+                category_id=data['category_id'],
+                subcategory_id=data['subcategory_id']
+            )
+            return success
+        except Exception as e:
+            print(f"Erreur lors de la mise à jour du rendez-vous: {e}")
+            return False
     
     def delete(self):
         """Supprime le rendez-vous (mode édition seulement)"""
@@ -338,16 +387,18 @@ class AppointmentDialog:
         
         if result:
             # Supprimer le rendez-vous
-            # success = appointment_service.deleteAppointment(self.appointment.id)
-            success = True  # Simulé pour l'instant
-            
-            if success:
-                self.showSuccess("Rendez-vous supprimé avec succès")
-                if self.callback:
-                    self.callback(None)  # Signal de suppression
-                self.window.destroy()
-            else:
-                self.showError("Erreur", "Impossible de supprimer le rendez-vous")
+            try:
+                success = self.appointment_service.deleteAppointment(self.appointment.id)
+                
+                if success:
+                    self.showSuccess("Rendez-vous supprimé avec succès")
+                    if self.callback:
+                        self.callback(None)  # Signal de suppression
+                    self.window.destroy()
+                else:
+                    self.showError("Erreur", "Impossible de supprimer le rendez-vous")
+            except Exception as e:
+                self.showError("Erreur", f"Erreur lors de la suppression: {e}")
     
     def cancel(self):
         """Annule et ferme le dialogue"""
@@ -359,10 +410,19 @@ class AppointmentDialog:
         error_window.title(title)
         error_window.geometry("400x150")
         error_window.transient(self.window)
-        error_window.grab_set()
         
+        # Contenu du dialogue
         ctk.CTkLabel(error_window, text=message, wraplength=350).pack(pady=20)
         ctk.CTkButton(error_window, text="OK", command=error_window.destroy).pack(pady=10)
+        
+        # Centrer la fenêtre
+        error_window.update_idletasks()
+        x = error_window.winfo_x() + (error_window.winfo_width() // 2) - 200
+        y = error_window.winfo_y() + (error_window.winfo_height() // 2) - 75
+        error_window.geometry(f"400x150+{x}+{y}")
+        
+        # Focus sécurisé différé
+        error_window.after(50, lambda: self._setPopupFocus(error_window))
     
     def showSuccess(self, message: str):
         """Affiche un message de succès"""
